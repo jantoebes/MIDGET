@@ -52,11 +52,11 @@ object Visualization {
     val abnTransactions = AbnLine.readTransactions.getOrElse(throw new IllegalStateException("Error in visualisation"))
     val aegonTransactions = AegonLine.readTransactions.getOrElse(throw new IllegalStateException("Error in visualisation"))
 
-    val transactions: Seq[Transaction] = abnTransactions ++ aegonTransactions
+    val transactions: Seq[Transaction] = (abnTransactions ++ aegonTransactions).sortBy(_.date)
 
-    val accounts: Seq[String] = transactions.map(_.account).distinct
+    val accounts: Seq[String] = transactions.map(_.account).distinct.sorted
 
-    val transactionDates: Seq[Date] = transactions.map(_.date).distinct
+    val transactionDates: Seq[Date] = transactions.map(_.date).distinct.sorted
 
     val accountTransactionsMultiPerDate: Map[String, Seq[Transaction]] =
       transactions
@@ -83,17 +83,17 @@ object Visualization {
       (firstAccountValuesForMonth :+ lastTransaction).sortBy(_.date)
     })
 
-    summarized
+    val y = summarized
       .map(item => Serie(item._1, item._2))
-      .toSeq
+      .toList
 
+    y
   }
 
   def getAccountsTotal(accountTransactions: Map[String, Seq[Transaction]], transactionDates: Seq[Date], accounts: Seq[String]) = {
     case class FoldData(latestAccountBalance: Map[String, BigDecimal] = Map.empty[String, BigDecimal], result: Seq[Transaction] = Seq.empty)
 
     def getFirstValue(items: Seq[Transaction]) = items.sortBy(_.date).head.balance
-
     transactionDates
           .foldLeft(FoldData(latestAccountBalance = accountTransactions.mapValues(getFirstValue)))((foldData: FoldData, date: Date) => {
             val accountsBalance = accounts

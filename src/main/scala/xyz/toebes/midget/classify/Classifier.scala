@@ -3,7 +3,9 @@ package xyz.toebes.midget.classify
 import kantan.codecs.Result
 import kantan.csv.ReadError
 import xyz.toebes.midget.output.Settings
-import xyz.toebes.midget.parse.{ ParsedLine, Parser }
+import xyz.toebes.midget.parse.{ParsedLine, Parser}
+
+import scalaz.\/
 
 object Classifier {
 
@@ -34,5 +36,22 @@ object Classifier {
       }),
       settings
     )
+  }
+
+  def unusedRules(items: Seq[ParsedLine], rules: Seq[ClassifyRule], settings: Settings): \/[Seq[String], Unit] = {
+    import scalaz._
+
+    val unmatchedRules = rules.filterNot(rule =>
+      if (!rule.hasSecondFilter) {
+        items.exists(item => item.getCCParams.getOrElse(rule.field, "").toString.toLowerCase().contains(rule.filter.toLowerCase()))
+      } else {
+        items.exists(item => item.getCCParams.getOrElse(rule.field, "").toString.toLowerCase().contains(rule.filter.toLowerCase()) &&
+          item.getCCParams.getOrElse(rule.field2.get, "").toString.toLowerCase().contains(rule.filter2.get.toLowerCase()))
+      })
+
+    if (unmatchedRules.isEmpty)
+      \/.right(Unit)
+    else
+      \/.left(unmatchedRules.map(_.toString))
   }
 }

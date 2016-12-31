@@ -59,7 +59,7 @@ object AegonLine {
   private def fromPlainString(value: String) = Date(value.substring(6, 10).toInt, value.substring(3, 5).toInt, value.substring(0, 2).toInt)
 
   def readTransactions: \/[Seq[String], Seq[Transaction]] = {
-    val lines = readLines
+    val lines = readLines.map(_.toList)
 
     lines.map((items: Seq[AegonLine]) => items.map(item=>Transaction(fromPlainString(item.datum), item.account, BigDecimal(item.saldo.replace(".", "").replace(",", ".")))))
   }
