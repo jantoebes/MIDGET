@@ -1,5 +1,6 @@
 package xyz.toebes.midget
 
+import org.joda.time.DateTime
 import xyz.toebes.midget.classify.{ ClassifiedLine, Classifier, ClassifyRule, _ }
 import xyz.toebes.midget.group.GroupReport
 import xyz.toebes.midget.importer.AbnLine
@@ -60,7 +61,23 @@ object Classification {
     Outputter.printText("output", "common", groupReport.toTable.getOutput)
 
     if (printPdf) {
-      Outputter.printPdf("pdf", "Inkomsten_Uitgaven", groupReport.toTable.getOutput, true, Some(8))
+      Outputter.printPdf(
+        "pdf",
+        "Inkomsten_Uitgaven",
+        groupReport
+          .copy(
+            lines = groupReport.lines.filter(i => months.contains(i.line.date))
+          )
+          .toTable
+          .getOutput, false, Some(12)
+      )
+    }
+  }
+
+  def months: Seq[String] = {
+    val dateTime = new DateTime()
+    1 to 12 map { i =>
+      "2017" + "%02d".format(i)
     }
   }
 
@@ -84,7 +101,15 @@ object Classification {
     Outputter.printText("output", "uitgaven", groupReport.toDailyTable.getOutput)
 
     if (printPdf)
-      Outputter.printPdf("pdf", "Uitgaven", groupReport.toDailyTable.getOutput, true, Some(8))
+
+      Outputter.printPdf("pdf", "Uitgaven", groupReport
+        .copy(
+          lines = groupReport.lines.filter(i => months.contains(i.line.date))
+        )
+        .toDailyTable
+        .getOutput,
+        false,
+        Some(12))
   }
 
   def parse(raw: Seq[AbnLine]) = Parser.parse(raw)
