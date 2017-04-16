@@ -3,7 +3,7 @@ package xyz.toebes.midget
 import kantan.codecs.Result
 import spray.json.DefaultJsonProtocol._
 import spray.json._
-import xyz.toebes.midget.importer.{AbnLine, AegonLine}
+import xyz.toebes.midget.importer.{ AbnLine, AegonLine }
 import xyz.toebes.midget.output.Outputter
 
 import scala.reflect.ClassTag
@@ -16,7 +16,6 @@ object Visualization {
   implicit val ord = Ordering.by(Date.unapply)
 
   case class Date(year: Int, month: Int, day: Int)
-
 
   case class Transaction(date: Date, account: String, balance: BigDecimal)
 
@@ -44,7 +43,7 @@ object Visualization {
     val series: Seq[Serie] = getTransactions
 
     Outputter.printText("xls", "data", series.find(_.name.equalsIgnoreCase(total)).get.data.map(item => {
-        s"${item.account},${item.date.year}-${item.date.month}-${item.date.day},${item.balance}"
+      s"${item.account},${item.date.year}-${item.date.month}-${item.date.day},${item.balance}"
     }).mkString(System.lineSeparator()), "csv")
   }
 
@@ -69,14 +68,14 @@ object Visualization {
           _.groupBy(_.date)
             .map(_._2.last)
             .toList
-            .sortBy(_.date))
-
+            .sortBy(_.date)
+        )
 
     val transactionsSummed = total -> getAccountsTotal(accountTransactions, transactionDates, accounts)
 
     val allTransactions = accountTransactions + transactionsSummed
 
-    val summarized = allTransactions.mapValues(valuesForAccount =>{
+    val summarized = allTransactions.mapValues(valuesForAccount => {
       val firstAccountValuesForMonth: Seq[Transaction] = valuesForAccount.groupBy(_.date.month).mapValues(_.head).values.toSeq
       val lastTransaction = valuesForAccount.sortBy(_.date).last
 
@@ -95,19 +94,19 @@ object Visualization {
 
     def getFirstValue(items: Seq[Transaction]) = items.sortBy(_.date).head.balance
     transactionDates
-          .foldLeft(FoldData(latestAccountBalance = accountTransactions.mapValues(getFirstValue)))((foldData: FoldData, date: Date) => {
-            val accountsBalance = accounts
-              .map((account: String) => {
-                val transactions = accountTransactions(account)
+      .foldLeft(FoldData(latestAccountBalance = accountTransactions.mapValues(getFirstValue)))((foldData: FoldData, date: Date) => {
+        val accountsBalance = accounts
+          .map((account: String) => {
+            val transactions = accountTransactions(account)
 
-                val balanceForDate = transactions.find(item => item.date == date).map(_.balance)
+            val balanceForDate = transactions.find(item => item.date == date).map(_.balance)
 
-                (account, balanceForDate.getOrElse(foldData.latestAccountBalance(account)))
-              }).toMap
+            (account, balanceForDate.getOrElse(foldData.latestAccountBalance(account)))
+          }).toMap
 
-            val transactions = foldData.result :+ Transaction(date, total, accountsBalance.values.sum)
+        val transactions = foldData.result :+ Transaction(date, total, accountsBalance.values.sum)
 
-            FoldData(accountsBalance, transactions)
-          }).result.sortBy(_.date)
+        FoldData(accountsBalance, transactions)
+      }).result.sortBy(_.date)
   }
 }

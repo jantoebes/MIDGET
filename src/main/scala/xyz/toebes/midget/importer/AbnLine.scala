@@ -28,17 +28,17 @@ object AbnLine {
   private def fromPlainString(value: String) = Date(value.substring(0, 4).toInt, value.substring(4, 6).toInt, value.substring(6, 8).toInt)
 
   def readTransactions: \/[Seq[String], Seq[Transaction]] = {
-    readLines.map((items: Seq[AbnLine]) => items.map(item=>Transaction(fromPlainString(item.date), item.account, BigDecimal(item.balanceAfter.replace(",", ".")))))
+    readLines.map((items: Seq[AbnLine]) => items.map(item => Transaction(fromPlainString(item.date), item.account, BigDecimal(item.balanceAfter.replace(",", ".")))))
   }
 }
 
 case class AbnLine(
-                account: String,
-                currency: String,
-                date: String,
-                balanceBefore: String,
-                balanceAfter: String,
-                date2: String,
-                amount: String,
-                description: String
-              )
+  account: String,
+  currency: String,
+  date: String,
+  balanceBefore: String,
+  balanceAfter: String,
+  date2: String,
+  amount: String,
+  description: String
+)

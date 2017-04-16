@@ -1,14 +1,14 @@
 package xyz.toebes.midget.importer
 
-import java.io.{File, StringWriter}
+import java.io.{ File, StringWriter }
 import java.nio.charset.StandardCharsets
 
 import kantan.codecs.Result
 import kantan.csv._
 import kantan.csv.ops._
 import kantan.csv.generic._
-import org.apache.commons.cli.{CommandLine, GnuParser}
-import org.apache.pdfbox.pdmodel.{PDDocument, PDPage}
+import org.apache.commons.cli.{ CommandLine, GnuParser }
+import org.apache.pdfbox.pdmodel.{ PDDocument, PDPage }
 import technology.tabula.CommandLineApp
 import xyz.toebes.midget.Visualization._
 import xyz.toebes.midget.config.Config
@@ -46,7 +46,7 @@ object AegonLine {
       val rawPdfTableContent = getPdfTableContent(Config.aegon + file.getName)
 
       val rawLines = rawPdfTableContent
-        .replaceAll("€","")
+        .replaceAll("€", "")
         .replaceAll("\" ", "\"")
         .replaceAll(" \"", "\"")
 
@@ -61,22 +61,22 @@ object AegonLine {
   def readTransactions: \/[Seq[String], Seq[Transaction]] = {
     val lines = readLines.map(_.toList)
 
-    lines.map((items: Seq[AegonLine]) => items.map(item=>Transaction(fromPlainString(item.datum), item.account, BigDecimal(item.saldo.replace(".", "").replace(",", ".")))))
+    lines.map((items: Seq[AegonLine]) => items.map(item => Transaction(fromPlainString(item.datum), item.account, BigDecimal(item.saldo.replace(".", "").replace(",", ".")))))
   }
 }
 
 case class AegonLinePdf(
-                    datum: String,
-                    omschrijving: String,
-                    tenaamstelling: String,
-                    tegenrekening: String,
-                    unknown: String,
-                    bedrag: String,
-                    saldo: String
-                    )
+  datum: String,
+  omschrijving: String,
+  tenaamstelling: String,
+  tegenrekening: String,
+  unknown: String,
+  bedrag: String,
+  saldo: String
+)
 
 case class AegonLine(
-                         datum: String,
-                         account: String,
-                         saldo: String
-                       )
+  datum: String,
+  account: String,
+  saldo: String
+)

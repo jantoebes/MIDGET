@@ -1,27 +1,26 @@
 package xyz.toebes.midget
 
-import java.io.{File, FilenameFilter}
+import java.io.{ File, FilenameFilter }
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{ Config, ConfigFactory }
 import org.apache.commons.io.FileUtils
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
+import org.openqa.selenium.chrome.{ ChromeDriver, ChromeOptions }
 import org.scalatest.ShouldMatchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.WebBrowser
-import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.time.{ Millis, Seconds, Span }
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.HashMap
-
 
 object Downloader extends WebBrowser with Eventually with ShouldMatchers {
   private val aegonDir = """/Users/Jan/Google Drive/App/midget/data/aegon"""
   private val abnDir = """/Users/Jan/Google Drive/App/midget/data/abn"""
 
-  val filePatienceConfig = PatienceConfig(timeout = scaled(Span(2, Seconds)), interval = scaled(Span(150, Millis)))
+  val filePatienceConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)), interval = scaled(Span(150, Millis)))
 
   def downloadAegon = {
     FileUtils.cleanDirectory(new File(aegonDir))
@@ -52,19 +51,19 @@ object Downloader extends WebBrowser with Eventually with ShouldMatchers {
       click on cssSelector(".mcf-loginSofttoken")
       waitForReady
 
-      eventually{ textField(cssSelector(".mcf-accountnumber")).isDisplayed should be(true) }
+      eventually { textField(cssSelector(".mcf-accountnumber")).isDisplayed should be(true) }
 
-      textField(cssSelector(".mcf-accountnumber")).value= config.getString("accountnumber")
-      textField(cssSelector(".mcf-cardnumber")).value= config.getString("cardnumber")
-      textField(cssSelector("input[name=login-pincode-0]")).value= config.getString("pincode")(0).toString
-      textField(cssSelector("input[name=login-pincode-1]")).value= config.getString("pincode")(1).toString
-      textField(cssSelector("input[name=login-pincode-2]")).value= config.getString("pincode")(2).toString
-      textField(cssSelector("input[name=login-pincode-3]")).value= config.getString("pincode")(3).toString
-      textField(cssSelector("input[name=login-pincode-4]")).value= config.getString("pincode")(4).toString
+      textField(cssSelector(".mcf-accountnumber")).value = config.getString("accountnumber")
+      textField(cssSelector(".mcf-cardnumber")).value = config.getString("cardnumber")
+      textField(cssSelector("input[name=login-pincode-0]")).value = config.getString("pincode")(0).toString
+      textField(cssSelector("input[name=login-pincode-1]")).value = config.getString("pincode")(1).toString
+      textField(cssSelector("input[name=login-pincode-2]")).value = config.getString("pincode")(2).toString
+      textField(cssSelector("input[name=login-pincode-3]")).value = config.getString("pincode")(3).toString
+      textField(cssSelector("input[name=login-pincode-4]")).value = config.getString("pincode")(4).toString
 
       click on cssSelector(".mcf-button-submit")
 
-      eventually{ cssSelector("input[name=selectAllTables]").element.isDisplayed should be(true) }
+      eventually { cssSelector("input[name=selectAllTables]").element.isDisplayed should be(true) }
 
       click on cssSelector("input[name=selectAllTables]")
 
@@ -128,9 +127,8 @@ object Downloader extends WebBrowser with Eventually with ShouldMatchers {
       textField(id("ddpPeriod-to")).value = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime)
       click on id("btn-filter-ddpPeriod")
       waitForReady
-
       cssSelector("#download-overview").webElement.click()
-
+      Thread.sleep(5000)
       println(s"SUCCESS DOWNLOADED $link")
 
     }
@@ -149,10 +147,10 @@ object Downloader extends WebBrowser with Eventually with ShouldMatchers {
 
     val options = new ChromeOptions()
 
-
     options.setExperimentalOption("prefs", HashMap[String, Any](
       "profile.default_content_settings.popups" -> 0,
-      "download.default_directory" -> dir).asJava)
+      "download.default_directory" -> dir
+    ).asJava)
 
     options.addArguments("--test-type");
     options.addArguments("-incognito");

@@ -3,7 +3,7 @@ package xyz.toebes.midget.classify
 import kantan.codecs.Result
 import kantan.csv.ReadError
 import xyz.toebes.midget.output.Settings
-import xyz.toebes.midget.parse.{ParsedLine, Parser}
+import xyz.toebes.midget.parse.{ ParsedLine, Parser }
 
 import scalaz.\/
 

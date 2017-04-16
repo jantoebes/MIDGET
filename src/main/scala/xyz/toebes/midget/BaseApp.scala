@@ -17,8 +17,8 @@ object BaseApp extends WatchRun {
     }
 
     if (importAegon) {
-    Console.println("Importing AEGON...")
-    Downloader.downloadAegon
+      Console.println("Importing AEGON...")
+      Downloader.downloadAegon
     }
   }
 

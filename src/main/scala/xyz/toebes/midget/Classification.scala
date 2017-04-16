@@ -1,10 +1,10 @@
 package xyz.toebes.midget
 
-import xyz.toebes.midget.classify.{ClassifiedLine, Classifier, ClassifyRule, _}
+import xyz.toebes.midget.classify.{ ClassifiedLine, Classifier, ClassifyRule, _ }
 import xyz.toebes.midget.group.GroupReport
 import xyz.toebes.midget.importer.AbnLine
-import xyz.toebes.midget.output.{Outputter, Settings, TableOutput}
-import xyz.toebes.midget.parse.{ParsedLine, Parser}
+import xyz.toebes.midget.output.{ Outputter, Settings, TableOutput }
+import xyz.toebes.midget.parse.{ ParsedLine, Parser }
 
 import scalaz.\/
 
@@ -16,7 +16,7 @@ object Classification {
       settings <- Settings.read
       ignores <- ClassifyRule.readCategoryIgnores
       parsedItems: Seq[ParsedLine] = Parser.parse(csvLines)
-      _ <- Classifier.unusedRules(parsedItems,classifyRules,settings)
+      _ <- Classifier.unusedRules(parsedItems, classifyRules, settings)
     } yield {
       val classifiedLines: ClassifiedLines = Classifier.classify(parsedItems, classifyRules, settings)
 
@@ -47,18 +47,20 @@ object Classification {
   def printClassifiedLinesFailed(classifiedLines: ClassifiedLines) =
     Outputter.printText("errors", "classifyfailed", TableOutput(
       ClassifiedLine.getHeader,
-      classifiedLines.getFailure.map(_.toTableRow(false))).getOutput)
+      classifiedLines.getFailure.map(_.toTableRow(false))
+    ).getOutput)
 
   def printClassifiedLinesSuccess(classifiedLines: ClassifiedLines) =
     Outputter.printText("errors", "classifyresult", TableOutput(
       ClassifiedLine.getHeader,
-      classifiedLines.getSuccess.map(_.toTableRow(true))).getOutput)
+      classifiedLines.getSuccess.map(_.toTableRow(true))
+    ).getOutput)
 
   def printGroupReport(groupReport: GroupReport, printPdf: Boolean) = {
     Outputter.printText("output", "common", groupReport.toTable.getOutput)
 
     if (printPdf) {
-      Outputter.printPdf("pdf", "Inkomsten_Uitgaven", groupReport.toTable.getOutput, true, Some(9))
+      Outputter.printPdf("pdf", "Inkomsten_Uitgaven", groupReport.toTable.getOutput, true, Some(8))
     }
   }
 
@@ -82,7 +84,7 @@ object Classification {
     Outputter.printText("output", "uitgaven", groupReport.toDailyTable.getOutput)
 
     if (printPdf)
-      Outputter.printPdf("pdf", "Uitgaven", groupReport.toDailyTable.getOutput, true, Some(9))
+      Outputter.printPdf("pdf", "Uitgaven", groupReport.toDailyTable.getOutput, true, Some(8))
   }
 
   def parse(raw: Seq[AbnLine]) = Parser.parse(raw)

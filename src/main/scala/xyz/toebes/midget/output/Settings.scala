@@ -5,7 +5,7 @@ import kantan.csv.ops._
 import kantan.csv.generic._
 import xyz.toebes.midget.App
 import xyz.toebes.midget.config.Config
-import xyz.toebes.midget.parse.{ParsedLine, Parser}
+import xyz.toebes.midget.parse.{ ParsedLine, Parser }
 import xyz.toebes.midget.util.Error._
 
 object Settings {

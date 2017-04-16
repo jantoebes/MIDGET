@@ -1,6 +1,6 @@
 package xyz.toebes.midget
 
-import java.util.logging.{Level, Logger}
+import java.util.logging.{ Level, Logger }
 
 import com.barbarysoftware.watchservice.BarbaryWatch
 
